@@ -1,0 +1,611 @@
+version 4
+
+// File extracted from model/arm26.osim
+
+//Publication : Holzbaur, K.R.S., Murray, W.M., Delp, S.L. A Model of the Upper Extremity for Simulating Musculoskeletal Surgery and Analyzing Neuromuscular Control. Annals of Biomedical Engineering, vol 33, pp 829–840, 2005
+
+//Credit : The OpenSim Development Team (Reinbolt, J; Seth, A; Habib, A; Hamner, S) adapted from a model originally created by Kate Holzbaur (11/22/04) License: Creative Commons (CCBY 3.0). You are free to distribute, remix, tweak, and build upon this work, even commercially, as long as you credit us for the original creation. http://creativecommons.org/licenses/by/3.0/
+
+//Force units : N
+
+//Length units : meters
+
+// Biomod not include all Osim features as the optimisation is performed on a third part software.
+// The original file contained some of these features, corresponding warnings are shown in the end of the file.
+
+
+gravity	0 -9.8065999999999995 0
+
+// SEGMENT DEFINITION
+
+// Information about ground segment
+
+    //True segment where are applied inertial values.
+	// Segment
+	segment ground
+		parent base 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+	endsegment
+
+	// Markers
+
+// Information about base segment
+	// Segment
+	segment base_parent_offset
+		parent ground 
+		RTinMatrix	0
+		RT	0 0 0	xyz	0 0.80000000000000004 0
+	endsegment
+
+
+    // Segment to cancel transformation bases effect.
+	// Segment
+	segment base_reset_axis
+		parent base_parent_offset 
+		RTinMatrix	1
+		RT
+			1.0		0.0		0.0		0
+			0.0		1.0		0.0		0
+			0.0		0.0		1.0		0
+			0		0		0		1
+	endsegment
+
+	// Segment
+	segment base_geom_2
+		parent base_reset_axis 
+		RTinMatrix	0
+		RT	-0.0	 0.0	 -0.0	xyz	-0.0	 -0.0	 -0.0
+		meshfile	Geometry_cleaned/ground_spine.vtp
+		meshcolor	1 1 1
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment base_geom_3
+		parent base_geom_2 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/ground_skull.vtp
+		meshcolor	1 1 1
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment base_geom_4
+		parent base_geom_3 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/ground_jaw.vtp
+		meshcolor	1 1 1
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment base_geom_5
+		parent base_geom_4 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/ground_r_clavicle.vtp
+		meshcolor	1 1 1
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment base_geom_6
+		parent base_geom_5 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/ground_r_scapula.vtp
+		meshcolor	1 1 1
+		meshscale	1 1 1
+	endsegment
+
+
+    //True segment where are applied inertial values.
+	// Segment
+	segment base
+		parent base_geom_6 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		mass	0
+		inertia
+			0	0	0
+			0	0	0
+			0	0	0
+		com	0 0 0
+		meshfile	Geometry_cleaned/ground_ribs.vtp
+		meshcolor	1 1 1
+		meshscale	1 1 1
+	endsegment
+
+	// Markers
+
+	// marker	r_acromion
+	//	parent	base
+	//	position	-0.01256 0.040000000000000001 0.17000000000000001
+	// endmarker
+
+// Information about r_humerus segment
+	// Segment
+	segment r_humerus_parent_offset
+		parent base 
+		RTinMatrix	0
+		RT	0 0 0	xyz	-0.017545000000000002 -0.0070000000000000001 0.17000000000000001
+	endsegment
+
+	// Segments to define transformation axis.
+	// Segment
+	segment r_humerus_translation
+		parent r_humerus_parent_offset 
+		RTinMatrix	0
+		RT 0 0 0 xyz 0 0 0
+	endsegment
+
+	// Segment
+	segment r_humerus_r_shoulder_elev
+		parent r_humerus_translation 
+		RTinMatrix	1
+		RT
+			-0.058898019716436364		0.12284098621964411		-0.9906770994517171		0
+			0.0022999999889266845		0.9924139655164921		0.12291961213688382		0
+			0.9982613551938856		0.004961164421406025		-0.058733751574802075		0
+			0		0		0		1
+		// ranges
+				// -1.5707963300000001 3.1415926500000002
+	endsegment
+	
+	segment r_humerus_r_shoulder_elev_2
+		parent r_humerus_r_shoulder_elev 
+		RTinMatrix	0
+		RT pi/2 0 0 xyz 0 0 0
+        rotations x
+		// ranges
+				// -1.5707963300000001 3.1415926500000002
+	endsegment
+
+	// Segment
+	segment r_humerus_rotation_1
+		parent r_humerus_r_shoulder_elev_2 
+		RTinMatrix	1
+		RT
+			0.1813001751698531		0.0022999999889266837		0.9834251148325589		0
+			0.12046904386480178		0.9924139655164919		-0.024530196047554936		0
+			-0.976021237450129		0.1229196121368838		0.1796477469895935		0
+			0		0		0		1
+		// ranges
+				// -1.5707963300000001 3.1415926500000002
+	endsegment
+
+	// Segment
+	segment r_humerus_rotation_2
+		parent r_humerus_rotation_1 
+		RTinMatrix	1
+		RT
+			-0.14860530351161844		0.10385755228558695		0.9834277160022827		0
+			0.5728470890041926		0.8196622552121225		-2.245176821503073e-17		0
+			-0.8060785795365376		0.5633537043579493		-0.18130065471071435		0
+			0		0		0		1
+		// ranges
+				// -1.5707963300000001 3.1415926500000002
+	endsegment
+
+
+    // Segment to cancel transformation bases effect.
+	// Segment
+	segment r_humerus_reset_axis
+		parent r_humerus_rotation_2 
+		RTinMatrix	1
+		RT
+			0.048276611360107066		0.5728470890041925		-0.8182393179351676		0
+			-0.033739648384159264		0.8196622552121224		0.571852623940374		0
+			0.9982639956056205		5.6776758151575405e-18		0.05889817550231511		0
+			0		0		0		1
+	endsegment
+
+
+    //True segment where are applied inertial values.
+	// Segment
+	segment r_humerus
+		parent r_humerus_reset_axis 
+		RTinMatrix	0
+		RT	-0.0	 0.0	 -0.0	xyz	-0.0	 -0.0	 -0.0
+		mass	1.8645719999999999
+		inertia
+			0.01481	0	0
+			0	0.0045510000000000004	0
+			0	0	0.013193
+		com	0 -0.18049599999999999 0
+		meshfile	Geometry_cleaned/arm_r_humerus.vtp
+		// orange
+		meshcolor	1 0.45 0.1
+		meshscale	1 1 1
+	endsegment
+
+	// Markers
+
+	//marker	r_humerus_epicondyle
+	//	parent	r_humerus
+	//	position	0.0050000000000000001 -0.29039999999999999 0.029999999999999999
+	// endmarker
+
+// Information about r_ulna_radius_hand segment
+	// Segment
+	segment r_ulna_radius_hand_parent_offset
+		parent r_humerus 
+		RTinMatrix	0
+		RT	0 0 0	xyz	0.0061000000000000004 -0.29039999999999999 -0.0123
+	endsegment
+
+	// Segments to define transformation axis.
+	// Segment
+	segment r_ulna_radius_hand_translation
+		parent r_ulna_radius_hand_parent_offset 
+		RTinMatrix	1
+		RT
+			1.0		0.0		0.0		0
+			0.0		1.0		0.0		0
+			0.0		0.0		1.0		0
+			0		0		0		1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_r_elbow_flex
+		parent r_ulna_radius_hand_translation 
+		RTinMatrix	1
+		RT
+			0.04940000998917986		0.2134349011657393		-0.9757075289129626		0
+			0.036600009991983457		0.9758572789922119		0.21532071499626507		0
+			0.9981082497813831		-0.04634775077916076		0.04039563981492509		0
+			0		0		0		1
+		rotations x
+		// ranges
+				// 0 2.2689280300000001
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_rotation_1
+		parent r_ulna_radius_hand_r_elbow_flex 
+		RTinMatrix	1
+		RT
+			0.45142482255606264		0.03660000999198345		0.8915582251590829		0
+			0.1760835658468469		0.9758572789922121		-0.12921744803460267		0
+			-0.8747629435560736		0.2153207149962651		0.43408153873968275		0
+			0		0		0		1
+		// ranges
+				// 0 2.2689280300000001
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_rotation_2
+		parent r_ulna_radius_hand_rotation_1 
+		RTinMatrix	1
+		RT
+			-0.44868313768135776		0.052356089295588416		0.8921559739608789		0
+			0.11590193504913435		0.9932606613834387		-1.600854569681092e-17		0
+			-0.8861434327535683		0.10340260374771103		-0.451727482145946		0
+			0		0		0		1
+		// ranges
+				// 0 2.2689280300000001
+	endsegment
+
+
+    // Segment to cancel transformation bases effect.
+	// Segment
+	segment r_ulna_radius_hand_reset_axis
+		parent r_ulna_radius_hand_rotation_2 
+		RTinMatrix	1
+		RT
+			-0.049099983819970314		0.11590193504913444		-0.9920463361359412		0
+			0.0057293954717682035		0.9932606613834389		0.11576023745510301		0
+			0.9987774354761958		2.495342799400104e-17		-0.049433130424779474		0
+			0		0		0		1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_2
+		parent r_ulna_radius_hand_reset_axis 
+		RTinMatrix	0
+		RT	-0.0	 0.0	 -0.0	xyz	-0.0	 -0.0	 -0.0
+		meshfile	Geometry_cleaned/arm_r_radius.vtp
+		// indigo
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_3
+		parent r_ulna_radius_hand_geom_2 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_lunate.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_4
+		parent r_ulna_radius_hand_geom_3 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_scaphoid.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_5
+		parent r_ulna_radius_hand_geom_4 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_pisiform.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_6
+		parent r_ulna_radius_hand_geom_5 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_triquetrum.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_7
+		parent r_ulna_radius_hand_geom_6 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_capitate.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_8
+		parent r_ulna_radius_hand_geom_7 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_trapezium.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_9
+		parent r_ulna_radius_hand_geom_8 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_trapezoid.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_10
+		parent r_ulna_radius_hand_geom_9 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_hamate.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_11
+		parent r_ulna_radius_hand_geom_10 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_1mc.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_12
+		parent r_ulna_radius_hand_geom_11 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_2mc.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_13
+		parent r_ulna_radius_hand_geom_12 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_3mc.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_14
+		parent r_ulna_radius_hand_geom_13 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_4mc.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_15
+		parent r_ulna_radius_hand_geom_14 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_5mc.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_16
+		parent r_ulna_radius_hand_geom_15 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_thumbprox.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_17
+		parent r_ulna_radius_hand_geom_16 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_thumbdist.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_18
+		parent r_ulna_radius_hand_geom_17 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_2proxph.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_19
+		parent r_ulna_radius_hand_geom_18 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_2midph.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_20
+		parent r_ulna_radius_hand_geom_19 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_2distph.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_21
+		parent r_ulna_radius_hand_geom_20 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_3proxph.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_22
+		parent r_ulna_radius_hand_geom_21 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_3midph.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_23
+		parent r_ulna_radius_hand_geom_22 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_3distph.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_24
+		parent r_ulna_radius_hand_geom_23 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_4proxph.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_25
+		parent r_ulna_radius_hand_geom_24 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_4midph.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_26
+		parent r_ulna_radius_hand_geom_25 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_4distph.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_27
+		parent r_ulna_radius_hand_geom_26 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_5proxph.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_28
+		parent r_ulna_radius_hand_geom_27 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_5midph.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Segment
+	segment r_ulna_radius_hand_geom_29
+		parent r_ulna_radius_hand_geom_28 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		meshfile	Geometry_cleaned/arm_r_5distph.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+
+    //True segment where are applied inertial values.
+	// Segment
+	segment r_ulna_radius_hand
+		parent r_ulna_radius_hand_geom_29 
+		RTinMatrix	0
+		RT	0	 0	 0	xyz	0	 0	 0
+		mass	1.5343150000000001
+		inertia
+			0.019281	0	0
+			0	0.0015709999999999999	0
+			0	0	0.020062
+		com	0 -0.181479 0
+		meshfile	Geometry_cleaned/arm_r_ulna.vtp
+		meshcolor	0.294118 0 0.509804
+		meshscale	1 1 1
+	endsegment
+
+	// Markers
+
+	marker	r_radius_styloid
+		parent	r_ulna_radius_hand
+		position	-0.0011000000000000001 -0.23558999999999999 0.094299999999999995
+	endmarker
+
+

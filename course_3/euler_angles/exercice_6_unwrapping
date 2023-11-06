@@ -1,0 +1,112 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+KIN6838 - Cours 3
+
+Matrice de rotation avec une séquence d'angles d'euler prédéfinies
+"""
+import numpy as np
+from biorbd import Rotation
+import matplotlib.pyplot as plt
+
+
+def identifier_xyz_angles(rotation_matrix):
+    # on préfère utiliser arctan2 qui est plus robuste que 
+    # np.arctan
+    # np.arctan2(denomiteur, numerateur)
+    alpha = - np.arctan2(rotation_matrix[1,2], rotation_matrix[2,2])
+    
+    beta = np.arcsin(rotation_matrix[0,2])
+    
+    gamma = - np.arctan2(rotation_matrix[0,1], rotation_matrix[0,0])
+    
+    return alpha, beta, gamma
+
+def rectify_xyz_angles(alpha, beta, gamma):
+    """ To handle the gimbal lock """
+    
+    gimbal_lock_happened = False
+    
+    for i, (a, b, g) in enumerate(zip(alpha, beta, gamma)):
+        
+        # Detection du gimbal lock
+        if np.abs(a - alpha[i-1]) > (np.pi * 0.95):
+            gimbal_lock_happened = True  
+            
+        if i > 0 and gimbal_lock_happened:
+            alpha[i] = a + np.pi
+            beta[i] = np.pi/2 + (np.pi/2 - b)
+            gamma[i] = g + np.pi
+        else:
+            alpha[i] = a
+            beta[i] = b
+            gamma[i] = g
+            
+    return alpha, beta, gamma
+        
+
+nb_points = 200
+alpha = np.linspace(-np.pi/3, np.pi, nb_points)
+beta = np.linspace(-np.pi/3, np.pi/ 2 + np.pi/8, nb_points)
+gamma = np.linspace(-np.pi/4, np.pi*0.8, nb_points)
+
+
+rot_x = np.zeros((3,3,nb_points))
+rot_y = np.zeros((3,3,nb_points))
+rot_z = np.zeros((3,3,nb_points))
+R_01 = np.zeros((3,3,nb_points))
+
+alpha_identified = np.zeros(nb_points)
+beta_identified = np.zeros(nb_points)
+gamma_identified = np.zeros(nb_points)
+
+for i in range(nb_points):
+    rot_x[:,:,i] = Rotation.fromEulerAngles(alpha[i:i+1], "x").to_array()
+    rot_y[:,:,i] = Rotation.fromEulerAngles(beta[i:i+1], "y").to_array()
+    rot_z[:,:,i] = Rotation.fromEulerAngles(gamma[i:i+1], "z").to_array()
+    
+    R_01[:,:,i] = rot_x[:,:,i] @ rot_y[:,:,i] @ rot_z[:,:,i]
+    
+    alpha_identified[i], beta_identified[i], gamma_identified[i] =  identifier_xyz_angles(R_01[:,:,i])
+    
+# rectification / Unwrap gimbal lock...
+alpha_rectified, beta_rectified, gamma_rectified = rectify_xyz_angles(
+    alpha_identified, beta_identified, gamma_identified)
+
+
+
+# plots 
+fig, axs = plt.subplots(3, 1, figsize=(10, 10))
+
+# Alpha vs Alpha Identified
+axs[0].plot(alpha_identified, label='Identified')
+axs[0].plot(alpha, '--', label='True')
+axs[0].plot(alpha_rectified, '-.', label='True')
+axs[0].set_title('Alpha vs. Alpha Identified')
+axs[0].set_xlabel('True Alpha')
+axs[0].set_ylabel('Identified Alpha')
+axs[0].legend()
+
+# Beta vs Beta Identified
+axs[1].plot(beta_identified, label='Identified')
+axs[1].plot(beta, '--', label='True')
+axs[1].plot(beta_rectified, '-.', label='True')
+axs[1].plot(np.repeat(np.pi/2, repeats=nb_points), label="Upper limit")
+axs[1].plot(np.repeat(-np.pi/2, repeats=nb_points), label="Lower limit")
+axs[1].set_title('Beta vs. Beta Identified')
+axs[1].set_xlabel('True Beta')
+axs[1].set_ylabel('Identified Beta')
+axs[1].legend()
+
+# Gamma vs Gamma Identified
+axs[2].plot(gamma_identified, label='Identified')
+axs[2].plot(gamma, '--', label='True')
+axs[2].plot(gamma_rectified, '-.', label='True')
+axs[2].set_title('Gamma vs. Gamma Identified')
+axs[2].set_xlabel('True Gamma')
+axs[2].set_ylabel('Identified Gamma')
+axs[2].legend()
+
+# Adjust the layout
+plt.tight_layout()
+plt.show()
